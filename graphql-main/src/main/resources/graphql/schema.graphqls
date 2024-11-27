@@ -1,0 +1,65 @@
+# Enums pour le type de compte et le type de transaction
+enum TypeCompte {
+    COURANT
+    EPARGNE
+}
+
+enum TypeTransaction {
+    DEPOT      # Dépôt d'argent
+    RETRAIT    # Retrait d'argent
+}
+
+# Types pour les requêtes et mutations
+type Query {
+    allComptes: [Compte]              # Récupère tous les comptes
+    compteById(id: ID): Compte        # Récupère un compte par son ID
+    totalSolde: SoldeStats            # Statistiques des soldes de tous les comptes
+    transactionsByCompte(compteId: ID!): [Transaction] # Transactions pour un compte spécifique
+}
+
+# Type Compte
+type Compte {
+    id: ID
+    solde: Float
+    dateCreation: String
+    type: TypeCompte
+    transactions: [Transaction]       # Transactions liées au compte
+}
+
+# Type Transaction
+type Transaction {
+    id: ID
+    amount: Float                     # Montant de la transaction
+    date: String                      # Date de la transaction
+    type: TypeTransaction             # Type de transaction : DÉPÔT ou RETRAIT
+    compteId: ID                      # ID du compte associé
+}
+
+# Type Mutation pour les opérations d'écriture
+type Mutation {
+    saveCompte(compte: CompteRequest): Compte       # Sauvegarde un compte
+    saveTransaction(transaction: TransactionRequest): Transaction # Sauvegarde une transaction
+    deleteTransaction(id: ID!): Boolean             # Supprime une transaction par son ID
+}
+
+# Input pour la création d'un compte
+input CompteRequest {
+    solde: Float
+    dateCreation: String
+    type: TypeCompte
+}
+
+# Input pour la création d'une transaction
+input TransactionRequest {
+    amount: Float
+    date: String
+    type: TypeTransaction
+    compteId: ID!
+}
+
+# Définition du type SoldeStats pour les statistiques des comptes
+type SoldeStats {
+    count: Int    # Nombre total de comptes
+    sum: Float    # Somme des soldes
+    average: Float # Moyenne des soldes
+}
